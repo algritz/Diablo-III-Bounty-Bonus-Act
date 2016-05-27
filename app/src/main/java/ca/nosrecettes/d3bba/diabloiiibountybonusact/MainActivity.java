@@ -17,8 +17,6 @@ public class MainActivity extends AppCompatActivity {
     private String current_cycle;
     private String next_cycle;
     List<String> remaining_cycle = new ArrayList<String>(bountyArray.length);
-    private String restart_cycle;
-    //  private String complete_cycle;
 
     private ListView bountyListView;
     private ArrayAdapter arrayAdapter;
@@ -50,15 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
         remaining_cycle_index = (current_hour + offset + 2) % 20;
 
-        if (remaining_cycle_index == (bountyArray.length + 1)) {
+        /* if (remaining_cycle_index == 20) {
             remaining_cycle_index = 0;
         }
 
-        if (next_cycle_index == bountyArray.length) {
+        if (next_cycle_index == 20) {
             next_cycle_index = 0;
             remaining_cycle_index = 1;
         }
-
+        */
         SimpleDateFormat starting_format = new SimpleDateFormat(" H.00:00");
         SimpleDateFormat ending_format = new SimpleDateFormat(" H.59:59");
 
@@ -70,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
         currentCycleTextView.setText(current_cycle);
         nextCycleTextView.setText(next_cycle);
 
-        for (int i = remaining_cycle_index; i < bountyArray.length; i++) {
-            remaining_cycle.add(full_starting_format.format((timeStamp + (3600000 * i))) + " - " + bountyArray[i]);
+        for (int i = current_cycle_index+2; i < 2; ++i) {
+            remaining_cycle.add("Cycle: " + current_cycle_index + " ## " + full_starting_format.format((timeStamp + (3600000 * (i)))) + " - " + bountyArray[i]);
         }
         for (int i = 0; i <= current_cycle_index - 1; i++) {
-            remaining_cycle.add(full_starting_format.format((timeStamp + (3600000 * i))) + " - " + bountyArray[i]);
+            remaining_cycle.add("Cycle: " + i + " -- " + full_starting_format.format((timeStamp + (3600000 * (i + (20 - current_cycle_index))))) + " - " + bountyArray[i]);
         }
 
         bountyListView = (ListView) findViewById(R.id.bounty_list);
