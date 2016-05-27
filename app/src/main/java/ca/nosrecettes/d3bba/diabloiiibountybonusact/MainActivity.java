@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat starting_format = new SimpleDateFormat(" H.00:00");
         SimpleDateFormat ending_format = new SimpleDateFormat(" H.59:59");
 
-        SimpleDateFormat full_starting_format = new SimpleDateFormat("L/dd/yy H.00:00");
+        SimpleDateFormat full_starting_format = new SimpleDateFormat("MMM/dd/yy H.00:00");
 
         current_cycle = "Current Cycle | until " + ending_format.format(timeStamp) + " - " + bountyArray[(int) current_cycle_index];
         next_cycle = "Next Cycle | Starting " + starting_format.format((timeStamp + 3600000)) + " - " + bountyArray[(int) next_cycle_index];
