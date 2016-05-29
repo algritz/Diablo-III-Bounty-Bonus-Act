@@ -53,13 +53,13 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleDateFormat full_starting_format = new SimpleDateFormat("MMM/dd/yy HH.00:00");
 
-        current_cycle = "Current Cycle | until       " + ending_format.format(timeStamp) + " - " + bountyArray[(int) current_cycle_index];
+        current_cycle = "Current Cycle | until        " + ending_format.format(timeStamp) + " - " + bountyArray[(int) current_cycle_index];
         next_cycle = "Next Cycle      | Starting " + starting_format.format((timeStamp + 3600000)) + " - " + bountyArray[(int) next_cycle_index];
 
         currentCycleTextView.setText(current_cycle);
         nextCycleTextView.setText(next_cycle);
 
-        for (int i = (current_hour + offset + 3) % 20; i < 100; ++i) {
+        for (int i = (current_hour + offset + 2) % 20; i < 100; ++i) {
             int index =  (current_hour + offset + i) % 20;
             int cycle_num = (i % 20);
             if (cycle_num == 0) {
