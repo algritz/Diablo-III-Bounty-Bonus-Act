@@ -17,7 +17,8 @@ import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity {
-    private String[] bountyArray = {"5, 2, 3, 1, 4", "2, 3, 1, 4, 5", "3, 1, 4, 2, 5", "1, 4, 2, 5, 3", "4, 2, 1, 5, 3", "2, 1, 5, 3, 4", "1, 5, 3, 4, 2", "5, 3, 4, 1, 2", "3, 4, 1, 2, 5", "4, 1, 3, 2, 5", "1, 3, 2, 5, 4", "3, 2, 5, 4, 1", "2, 5, 4, 3, 1", "5, 4, 3, 1, 2", "4, 3, 5, 1, 2", "3, 5, 1, 2, 4", "5, 1, 2, 4, 3", "1, 2, 4, 5, 3", "2, 4, 5, 3, 1", "4, 5, 2, 3, 1"};
+    private String[] bountyArray = {"5, 2, 3, 1, 4", "2, 3, 1, 4, 5", "3, 1, 4, 2, 5", "1, 4, 2, 5, 3", "4, 2, 1, 5, 3", "2, 1, 5, 3, 4", "1, 5, 3, 4, 2", "5, 3, 4, 1, 2", "3, 4, 1, 2, 5", "4, 1, 3, 2, 5", "1, 3, 2, 5, 4", "3, 2, 5, 4, 1", "2, 5, 4, 3, 1", "5, 4, 3, 1, 2", "4, 3, 5, 1, 2", "3, 5, 1, 2, 4", "5, 1, 2, 4, 3", "1, 2, 4, 5, 3", "2, 4, 5, 3, 1", "4, 5, 2, 3, 1"
+    };
     private String current_cycle;
     private String next_cycle;
     List<String> remaining_cycle = new ArrayList<String>(bountyArray.length);
@@ -107,13 +108,18 @@ public class MainActivity extends AppCompatActivity {
         currentCycleTextView.setText(current_cycle);
         nextCycleTextView.setText(next_cycle);
 
-        for (int i = (current_hour + offset + 2) % 20; i < 100; ++i) {
+        for (int i = (current_hour + offset) % 20, j = 2; i < 100; ++i, ++j) {
             int index = (current_hour + offset + i) % 20;
             int cycle_num = (i % 20);
             if (cycle_num == 0) {
                 cycle_num = 20;
             }
-            remaining_cycle.add("Cycle # " + String.format("%02d", cycle_num) + " - " + full_starting_format.format((timeStamp + (3600000 * (i)))) + " - " + bountyArray[index]);
+            int index_remaining = (current_hour + offset + j) % 20;
+            int cycle_remaining = (j % 20);
+            if (cycle_remaining == 0) {
+                cycle_remaining = 20;
+            }
+            remaining_cycle.add("Cycle # " + String.format("%02d", index) + " - " + full_starting_format.format((timeStamp + (3600000 * (j)))) + " - " + bountyArray[index_remaining]);
         }
 
         bountyListView = (ListView) findViewById(R.id.bounty_list);
@@ -122,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         // Third param is input array
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, remaining_cycle);
         bountyListView.setAdapter(arrayAdapter);
+        bountyListView.invalidateViews();
     }
 
 }
