@@ -1,15 +1,19 @@
 package ca.nosrecettes.d3bba.diabloiiibountybonusact;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -27,10 +31,54 @@ public class MainActivity extends AppCompatActivity {
     private int next_cycle_index;
     private int remaining_cycle_index;
 
+    Timer timer;
+    TimerTask timerTask;
+
+    //we are going to use a handler to be able to run in our TimerTask
+    final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        refresh_data();
+        startTimer();
+    }
+
+    public void startTimer() {
+        //set a new Timer
+        timer = new Timer();
+        //initialize the TimerTask's job
+        initializeTimerTask();
+
+        Calendar currentCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        long currentTimeInMillis = currentCalendar.getTimeInMillis();
+        int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = currentCalendar.get(Calendar.MINUTE);
+        int sec = currentCalendar.get(Calendar.SECOND);
+        int millis = currentCalendar.get(Calendar.MILLISECOND);
+
+        long millisUntilNextHour = (min * 60 * 1000 + sec * 1000 + millis + 299999) / 300000 * 300000 - (min * 60 * 1000 + sec * 1000 + millis);
+
+        //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
+        timer.schedule(timerTask, millisUntilNextHour, 36000000); //
+    }
+
+
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            public void run() {
+                //use a handler to run a toast that shows the current timestamp
+                handler.post(new Runnable() {
+                    public void run() {
+                        refresh_data();
+                    }
+                });
+            }
+        };
+    }
+
+
+    public void refresh_data() {
         setContentView(R.layout.activity_main);
 
         currentCycleTextView = (TextView) findViewById(R.id.current_cycle);
@@ -60,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         nextCycleTextView.setText(next_cycle);
 
         for (int i = (current_hour + offset + 2) % 20; i < 100; ++i) {
-            int index =  (current_hour + offset + i) % 20;
+            int index = (current_hour + offset + i) % 20;
             int cycle_num = (i % 20);
             if (cycle_num == 0) {
                 cycle_num = 20;
@@ -74,6 +122,6 @@ public class MainActivity extends AppCompatActivity {
         // Third param is input array
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, remaining_cycle);
         bountyListView.setAdapter(arrayAdapter);
-
     }
+
 }
