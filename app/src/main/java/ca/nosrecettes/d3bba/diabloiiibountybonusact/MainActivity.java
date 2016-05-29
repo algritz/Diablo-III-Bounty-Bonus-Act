@@ -59,18 +59,13 @@ public class MainActivity extends AppCompatActivity {
         currentCycleTextView.setText(current_cycle);
         nextCycleTextView.setText(next_cycle);
 
-        for (int i = current_cycle_index, j = current_cycle_index + 3, k = current_cycle_index + 2; i < 19; ++i, j++, k++) {
-            if (k == 20) {
-                k = 0;
+        for (int i = (current_hour + offset + 3) % 20; i < 100; ++i) {
+            int index =  (current_hour + offset + i) % 20;
+            int cycle_num = (i % 20);
+            if (cycle_num == 0) {
+                cycle_num = 20;
             }
-            if (j == 21) {
-                j = 1;
-            }
-            remaining_cycle.add("Cycle # " + String.format("%02d", j) + " - " + full_starting_format.format((timeStamp + (3600000 * (i)))) + " - " + bountyArray[k]);
-        }
-
-        for (int i = 0, j = current_cycle_index, k = current_cycle_index - 3, l = current_cycle_index - 1; i <= current_cycle_index; i++, j++, k++, l++) {
-            remaining_cycle.add("Cycle # " + String.format("%02d", j) + " -- " + full_starting_format.format((timeStamp + (3600000 * (k + 20)))) + " - " + bountyArray[l]);
+            remaining_cycle.add("Cycle # " + String.format("%02d", cycle_num) + " - " + full_starting_format.format((timeStamp + (3600000 * (i)))) + " - " + bountyArray[index]);
         }
 
         bountyListView = (ListView) findViewById(R.id.bounty_list);
