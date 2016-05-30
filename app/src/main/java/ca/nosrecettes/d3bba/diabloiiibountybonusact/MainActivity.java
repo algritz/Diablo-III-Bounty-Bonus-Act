@@ -21,12 +21,15 @@ public class MainActivity extends AppCompatActivity {
     };
     private String current_cycle;
     private String next_cycle;
+
     List<String> remaining_cycle = new ArrayList<String>(bountyArray.length);
 
     private ListView bountyListView;
     private ArrayAdapter arrayAdapter;
+
     private TextView currentCycleTextView;
     private TextView nextCycleTextView;
+
 
     private int current_cycle_index;
     private int next_cycle_index;
@@ -61,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         long millisUntilNextHour = (min * 60 * 1000 + sec * 1000 + millis + 299999) / 300000 * 300000 - (min * 60 * 1000 + sec * 1000 + millis);
 
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer.schedule(timerTask, millisUntilNextHour, 36000000); //
+        timer.schedule(timerTask, millisUntilNextHour, 36000000);
+        //timer.schedule(timerTask, 5000, 5000); // debug version, runs every 5 seconds
     }
 
 
@@ -107,19 +111,18 @@ public class MainActivity extends AppCompatActivity {
 
         currentCycleTextView.setText(current_cycle);
         nextCycleTextView.setText(next_cycle);
-
         for (int i = (current_hour + offset) % 20, j = 2; i < 100; ++i, ++j) {
             int index = (current_hour + offset + i) % 20;
-            int cycle_num = (i % 20);
+            int cycle_num = (index % 20);
             if (cycle_num == 0) {
                 cycle_num = 20;
             }
             int index_remaining = (current_hour + offset + j) % 20;
-            int cycle_remaining = (j % 20);
-            if (cycle_remaining == 0) {
+            int cycle_remaining = (index_remaining % 20) + 1;
+            /* if (cycle_remaining == 0) {
                 cycle_remaining = 20;
-            }
-            remaining_cycle.add("Cycle # " + String.format("%02d", index) + " - " + full_starting_format.format((timeStamp + (3600000 * (j)))) + " - " + bountyArray[index_remaining]);
+            } */
+            remaining_cycle.add("Cycle # " + String.format("%02d", cycle_remaining) + " - " + full_starting_format.format((timeStamp + (3600000 * (j)))) + " - " + bountyArray[index_remaining]);
         }
 
         bountyListView = (ListView) findViewById(R.id.bounty_list);
