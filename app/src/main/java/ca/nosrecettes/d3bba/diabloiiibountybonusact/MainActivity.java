@@ -3,6 +3,8 @@ package ca.nosrecettes.d3bba.diabloiiibountybonusact;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,6 +17,16 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.app.Activity;
+import android.os.SystemClock;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private String[] bountyArray = {"5, 2, 3, 1, 4", "2, 3, 1, 4, 5", "3, 1, 4, 2, 5", "1, 4, 2, 5, 3", "4, 2, 1, 5, 3", "2, 1, 5, 3, 4", "1, 5, 3, 4, 2", "5, 3, 4, 1, 2", "3, 4, 1, 2, 5", "4, 1, 3, 2, 5", "1, 3, 2, 5, 4", "3, 2, 5, 4, 1", "2, 5, 4, 3, 1", "5, 4, 3, 1, 2", "4, 3, 5, 1, 2", "3, 5, 1, 2, 4", "5, 1, 2, 4, 3", "1, 2, 4, 5, 3", "2, 4, 5, 3, 1", "4, 5, 2, 3, 1"
@@ -133,6 +145,59 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, remaining_cycle);
         bountyListView.setAdapter(arrayAdapter);
         bountyListView.invalidateViews();
+
+        bountyListView.setClickable(true);
+        bountyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                String o = (String) bountyListView.getItemAtPosition(position);
+                executeSelection(o, position);
+            }
+        });
+
     }
+
+    private void executeSelection(String toastText, int position) {
+        Context context = getApplicationContext();
+        int delay = (2 + position) * 3600000 ;
+
+        Calendar currentCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        long currentTimeInMillis = currentCalendar.getTimeInMillis();
+        int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
+        int min = currentCalendar.get(Calendar.MINUTE);
+        int sec = currentCalendar.get(Calendar.SECOND);
+        int millis = currentCalendar.get(Calendar.MILLISECOND);
+        long millisUntilNextHour = (min * 60 * 1000 + sec * 1000 + millis + 299999) / 300000 * 300000 - (min * 60 * 1000 + sec * 1000 + millis);
+        long notificationHour = currentTimeInMillis + millisUntilNextHour + delay;
+        SimpleDateFormat full_starting_format = new SimpleDateFormat("MMM/dd/yy HH.00:00");
+        int duration = Toast.LENGTH_SHORT;
+        CharSequence text = "Notification set: " + full_starting_format.format(notificationHour);
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+        scheduleNotification(getNotification(toastText), notificationHour);
+    }
+
+    private void scheduleNotification(Notification notification, long delay) {
+
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    private Notification getNotification(String content) {
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentTitle("Diablo III Bounty Bonus Act");
+        builder.setContentText(content);
+        builder.setSmallIcon(R.drawable.icon);
+        return builder.build();
+    }
+
 
 }
