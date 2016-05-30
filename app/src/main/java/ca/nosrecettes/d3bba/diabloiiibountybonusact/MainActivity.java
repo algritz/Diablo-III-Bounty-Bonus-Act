@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -132,9 +133,6 @@ public class MainActivity extends AppCompatActivity {
             }
             int index_remaining = (current_hour + offset + j) % 20;
             int cycle_remaining = (index_remaining % 20) + 1;
-            /* if (cycle_remaining == 0) {
-                cycle_remaining = 20;
-            } */
             remaining_cycle.add("Cycle # " + String.format("%02d", cycle_remaining) + " - " + full_starting_format.format((timeStamp + (3600000 * (j)))) + " - " + bountyArray[index_remaining]);
         }
 
@@ -144,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         // Third param is input array
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, remaining_cycle);
         bountyListView.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
         bountyListView.invalidateViews();
 
         bountyListView.setClickable(true);
@@ -155,12 +154,11 @@ public class MainActivity extends AppCompatActivity {
                 executeSelection(o, position);
             }
         });
-
     }
 
     private void executeSelection(String toastText, int position) {
         Context context = getApplicationContext();
-        int delay = (2 + position) * 3600000 ;
+        int delay = (2 + position) * 3600000;
 
         Calendar currentCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         long currentTimeInMillis = currentCalendar.getTimeInMillis();
@@ -169,14 +167,16 @@ public class MainActivity extends AppCompatActivity {
         int sec = currentCalendar.get(Calendar.SECOND);
         int millis = currentCalendar.get(Calendar.MILLISECOND);
         long millisUntilNextHour = (min * 60 * 1000 + sec * 1000 + millis + 299999) / 300000 * 300000 - (min * 60 * 1000 + sec * 1000 + millis);
-        long notificationHour = currentTimeInMillis + millisUntilNextHour + delay;
+        long notificationHour = millisUntilNextHour + delay;
+
         SimpleDateFormat full_starting_format = new SimpleDateFormat("MMM/dd/yy HH.00:00");
         int duration = Toast.LENGTH_SHORT;
-        CharSequence text = "Notification set: " + full_starting_format.format(notificationHour);
+        CharSequence text = "Notification set: " + full_starting_format.format(currentTimeInMillis + notificationHour);
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
 
         scheduleNotification(getNotification(toastText), notificationHour);
+        //scheduleNotification(getNotification(toastText), 5000); //debug version
     }
 
     private void scheduleNotification(Notification notification, long delay) {
