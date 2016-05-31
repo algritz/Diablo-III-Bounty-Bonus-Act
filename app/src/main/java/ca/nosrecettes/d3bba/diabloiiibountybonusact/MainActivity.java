@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -142,8 +143,9 @@ public class MainActivity extends AppCompatActivity {
         // Third param is input array
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, remaining_cycle);
         bountyListView.setAdapter(arrayAdapter);
-        arrayAdapter.notifyDataSetChanged();
         bountyListView.invalidateViews();
+        arrayAdapter.notifyDataSetChanged();
+
 
         bountyListView.setClickable(true);
         bountyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -186,9 +188,13 @@ public class MainActivity extends AppCompatActivity {
     private void scheduleNotification(Notification notification, long delay) {
 
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+
+        int notificationNumber = (int) System.currentTimeMillis();
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationNumber, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT); // debug version
+        // PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
