@@ -134,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
         currentCycleTextView.setText(current_cycle);
         nextCycleTextView.setText(next_cycle);
 
+        nextCycleTextView.setClickable(true);
+        nextCycleTextView.setOnClickListener(new View.OnClickListener() {
+                                                 @Override
+                                                 public void onClick(View v) {
+                                                     executeSelection((String) nextCycleTextView.getText(), -1);
+                                                 }
+                                             }
+        );
+
         for (int i = (current_hour + offset) % 20, j = 2; i < 100; ++i, ++j) {
             int index = (current_hour + offset + i) % 20;
             int cycle_num = (index % 20);
@@ -195,8 +204,8 @@ public class MainActivity extends AppCompatActivity {
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
 
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationNumber, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT); // debug version
-        // PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationNumber, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT); // debug version
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, notificationNumber, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -205,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Notification getNotification(String content) {
         Notification.Builder builder = new Notification.Builder(this);
+        builder.setVisibility(1);
         builder.setContentTitle("Diablo III Bounty Bonus Act");
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.icon);
