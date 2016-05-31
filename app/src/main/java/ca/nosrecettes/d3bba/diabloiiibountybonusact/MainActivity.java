@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         //initialize the TimerTask's job
         initializeTimerTask();
 
-        Calendar currentCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        Calendar currentCalendar = Calendar.getInstance();
         long currentTimeInMillis = currentCalendar.getTimeInMillis();
         int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
         int min = currentCalendar.get(Calendar.MINUTE);
@@ -158,23 +158,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void executeSelection(String toastText, int position) {
         Context context = getApplicationContext();
-        int delay = (2 + position) * 3600000;
+        int delay = (2 + position);
 
-        Calendar currentCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        long currentTimeInMillis = currentCalendar.getTimeInMillis();
+        Calendar currentCalendar = Calendar.getInstance();
         int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
+        hr = (hr + delay) % 24;
+        currentCalendar.set(Calendar.HOUR_OF_DAY, hr);
+        currentCalendar.set(Calendar.MINUTE, 0);
         int min = currentCalendar.get(Calendar.MINUTE);
+        currentCalendar.set(Calendar.SECOND, 0);
         int sec = currentCalendar.get(Calendar.SECOND);
+        currentCalendar.set(Calendar.MILLISECOND, 0);
         int millis = currentCalendar.get(Calendar.MILLISECOND);
-        long millisUntilNextHour = (min * 60 * 1000 + sec * 1000 + millis + 299999) / 300000 * 300000 - (min * 60 * 1000 + sec * 1000 + millis);
-        long notificationHour = millisUntilNextHour + delay;
+        long currentTimeInMillis = currentCalendar.getTimeInMillis();
 
         SimpleDateFormat full_starting_format = new SimpleDateFormat("MMM/dd/yy HH.00:00");
         int duration = Toast.LENGTH_SHORT;
-        CharSequence text = "Notification set: " + full_starting_format.format(currentTimeInMillis + notificationHour);
+        CharSequence text = "Notification set: " + full_starting_format.format(currentTimeInMillis);
+        //CharSequence text = "Notification set: " + (currentTimeInMillis); // debug version
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
-
+        long notificationHour = currentTimeInMillis - System.currentTimeMillis();
         scheduleNotification(getNotification(toastText), notificationHour);
         //scheduleNotification(getNotification(toastText), 5000); //debug version
     }
