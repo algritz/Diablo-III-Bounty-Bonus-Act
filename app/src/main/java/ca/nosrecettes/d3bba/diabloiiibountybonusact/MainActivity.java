@@ -103,6 +103,14 @@ public class MainActivity extends AppCompatActivity {
         currentCycleTextView = (TextView) findViewById(R.id.current_cycle);
         nextCycleTextView = (TextView) findViewById(R.id.next_cycle);
 
+        bountyListView = (ListView) findViewById(R.id.bounty_list);
+        // this-The current activity context.
+        // Second param is the resource Id for list layout row item
+        // Third param is input array
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, remaining_cycle);
+        bountyListView.setAdapter(arrayAdapter);
+        remaining_cycle.clear();
+
         long timeStamp = System.currentTimeMillis();
 
         int current_hour = (int) (timeStamp / 3600000);
@@ -137,15 +145,9 @@ public class MainActivity extends AppCompatActivity {
             remaining_cycle.add("Cycle # " + String.format("%02d", cycle_remaining) + " - " + full_starting_format.format((timeStamp + (3600000 * (j)))) + " - " + bountyArray[index_remaining]);
         }
 
-        bountyListView = (ListView) findViewById(R.id.bounty_list);
-        // this-The current activity context.
-        // Second param is the resource Id for list layout row item
-        // Third param is input array
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, remaining_cycle);
-        bountyListView.setAdapter(arrayAdapter);
+        arrayAdapter.addAll(remaining_cycle);
         bountyListView.invalidateViews();
         arrayAdapter.notifyDataSetChanged();
-
 
         bountyListView.setClickable(true);
         bountyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
