@@ -174,8 +174,16 @@ public class MainActivity extends AppCompatActivity {
         int delay = (2 + position);
 
         Calendar currentCalendar = Calendar.getInstance();
+        int current_year = currentCalendar.get(Calendar.YEAR);
+        int current_day = currentCalendar.get(Calendar.DAY_OF_YEAR);
         int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
+        int hr_delay = (hr + delay)/ 24;
+        currentCalendar.set(Calendar.DAY_OF_YEAR, current_day + hr_delay);
+        if (Calendar.DAY_OF_YEAR + 1 == 1) {
+            currentCalendar.set(Calendar.YEAR, current_year + 1);
+        }
         hr = (hr + delay) % 24;
+
         currentCalendar.set(Calendar.HOUR_OF_DAY, hr);
         currentCalendar.set(Calendar.MINUTE, 0);
         int min = currentCalendar.get(Calendar.MINUTE);
@@ -190,7 +198,9 @@ public class MainActivity extends AppCompatActivity {
         CharSequence text = "Notification set: " + full_starting_format.format(currentTimeInMillis);
         //CharSequence text = "Notification set: " + (currentTimeInMillis); // debug version
         Toast toast = Toast.makeText(context, text, duration);
+        //Toast toast = Toast.makeText(context, "Delay in hours: " + hr_delay, duration); //debug version
         toast.show();
+        // debug
         long notificationHour = currentTimeInMillis - System.currentTimeMillis();
         scheduleNotification(getNotification(toastText), notificationHour);
         //scheduleNotification(getNotification(toastText), 5000); //debug version
