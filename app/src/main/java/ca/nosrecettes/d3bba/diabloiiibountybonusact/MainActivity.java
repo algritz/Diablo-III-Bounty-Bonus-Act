@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
         int hr_delay = (hr + delay)/ 24;
         currentCalendar.set(Calendar.DAY_OF_YEAR, current_day + hr_delay);
-        if (Calendar.DAY_OF_YEAR + 1 == 1) {
+        if (Calendar.DAY_OF_YEAR + 1 < current_day) {
             currentCalendar.set(Calendar.YEAR, current_year + 1);
         }
         hr = (hr + delay) % 24;
