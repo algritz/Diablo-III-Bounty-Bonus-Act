@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        refresh_data();
         startTimer();
+        refresh_data();
     }
 
     public void startTimer() {
@@ -143,18 +143,13 @@ public class MainActivity extends AppCompatActivity {
                                              }
         );
 
-        for (int i = (current_hour + offset) % 20, j = 2; i < 100; ++i, ++j) {
-            int index = (current_hour + offset + i) % 20;
-            int cycle_num = (index % 20);
-            if (cycle_num == 0) {
-                cycle_num = 20;
-            }
+        for (int i = 1, j = 2; i < 100; ++i, ++j) {
             int index_remaining = (current_hour + offset + j) % 20;
             int cycle_remaining = (index_remaining % 20) + 1;
             remaining_cycle.add("Cycle # " + String.format("%02d", cycle_remaining) + " - " + full_starting_format.format((timeStamp + (3600000 * (j)))) + " - " + bountyArray[index_remaining]);
         }
 
-        arrayAdapter.addAll(remaining_cycle);
+        //arrayAdapter.addAll(remaining_cycle); // not required ???
         bountyListView.invalidateViews();
         arrayAdapter.notifyDataSetChanged();
 
@@ -174,17 +169,7 @@ public class MainActivity extends AppCompatActivity {
         int delay = (2 + position);
 
         Calendar currentCalendar = Calendar.getInstance();
-        int current_year = currentCalendar.get(Calendar.YEAR);
-        int current_day = currentCalendar.get(Calendar.DAY_OF_YEAR);
-        int hr = currentCalendar.get(Calendar.HOUR_OF_DAY);
-        int hr_delay = (hr + delay)/ 24;
-        currentCalendar.set(Calendar.DAY_OF_YEAR, current_day + hr_delay);
-        if (Calendar.DAY_OF_YEAR + 1 < current_day) {
-            currentCalendar.set(Calendar.YEAR, current_year + 1);
-        }
-        hr = (hr + delay) % 24;
-
-        currentCalendar.set(Calendar.HOUR_OF_DAY, hr);
+        currentCalendar.add(Calendar.HOUR, delay);
         currentCalendar.set(Calendar.MINUTE, 0);
         int min = currentCalendar.get(Calendar.MINUTE);
         currentCalendar.set(Calendar.SECOND, 0);
@@ -193,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         int millis = currentCalendar.get(Calendar.MILLISECOND);
         long currentTimeInMillis = currentCalendar.getTimeInMillis();
 
-        SimpleDateFormat full_starting_format = new SimpleDateFormat("MMM/dd/yy HH.00:00");
+        SimpleDateFormat full_starting_format = new SimpleDateFormat("MMM/dd/yyyy HH.00:00");
         int duration = Toast.LENGTH_SHORT;
         CharSequence text = "Notification set: " + full_starting_format.format(currentTimeInMillis);
         //CharSequence text = "Notification set: " + (currentTimeInMillis); // debug version
